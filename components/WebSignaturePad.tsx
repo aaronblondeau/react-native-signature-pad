@@ -3,6 +3,7 @@ import SignaturePad from "signature_pad";
 
 export type WebSignaturePadRef = {
   clear: () => void,
+  resize: () => void,
   toDataURL: () => string,
   isEmpty: () => boolean,
 }
@@ -18,6 +19,9 @@ const WebSignaturePad = forwardRef(({ onBeginStroke, onEndStroke, style } : {
   useImperativeHandle(ref, () => ({
     clear: () => {
       signaturePad.current?.clear();
+    },
+    resize: () => {
+      resizeCanvas()
     },
     toDataURL: () => {
       return signaturePad.current?.toDataURL() || ''
@@ -61,7 +65,7 @@ const WebSignaturePad = forwardRef(({ onBeginStroke, onEndStroke, style } : {
       signaturePad.current.clear(); // otherwise isEmpty() might return incorrect value
     }
   }
-
+  
   return (
     <canvas ref={canvasRef} style={style}></canvas>
   );

@@ -8,6 +8,7 @@ export default function Index() {
   const webSignaturePad = useRef<WebSignaturePadRef>(null)
   const mobileSignaturePad = useRef<MobileSignaturePadRef>(null)
 
+  // Not doing anything with these yet...
   function handleBeginStroke () {
     console.log('~~ handleBeginStroke')
   }
@@ -18,11 +19,9 @@ export default function Index() {
 
   function handleDone() {
     if (webSignaturePad.current) {
-      console.log('~~ handleDone web')
       setImageData(webSignaturePad.current.toDataURL())
     }
     if (mobileSignaturePad.current) {
-      console.log('~~ handleDone mobile')
       mobileSignaturePad.current.requestImageData()
     }
   }
@@ -54,6 +53,7 @@ export default function Index() {
         ref={webSignaturePad} 
         onBeginStroke={handleBeginStroke} 
         onEndStroke={handleEndStroke}
+        style={{ height: 250, width: 250 }}
       />}
       { Platform.OS !== 'web' && 
       <MobileSignaturePad
@@ -61,14 +61,14 @@ export default function Index() {
         onBeginStroke={handleBeginStroke}
         onEndStroke={handleEndStroke}
         onSignatureData={handleSignatureData}
-        style={{ height: 250, width: Math.round(Dimensions.get('window').width * 0.9), flex: 0 }}
+        style={{ height: 250, width: 250, flex: 0 }}
       />}
       <Button title="Done" onPress={handleDone} />
       <Button title="Reset" onPress={handleReset} />
       {imageData && (
         <Image
           resizeMode="contain"
-          style={{ height: 250, width: Math.round(Dimensions.get('window').width * 0.9) }}
+          style={{ height: 250, width: 250, flex: 1 }}
           source={{ uri: imageData }}
         />
       )}

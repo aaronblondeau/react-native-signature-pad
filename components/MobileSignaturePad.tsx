@@ -15,6 +15,8 @@ const MobileSignaturePad = forwardRef(({ onBeginStroke, onEndStroke, onSignature
     onSignatureData: (data: string) => void,
     style?: ViewStyle
   }, ref) => {
+
+  // Default html to show while signature pad html is loading
   const [sourceHtml, setSourceHtml] = useState(`
     <!DOCTYPE html><html lang="en">
     <html lang="en">
@@ -50,6 +52,8 @@ const MobileSignaturePad = forwardRef(({ onBeginStroke, onEndStroke, onSignature
     }
   }
 
+  // Methods that parent can call
+  // Why in the world isn't useImperativeHandle called something better like "expose"?
   useImperativeHandle(ref, () => ({
     clear: () => {
       webview.current?.injectJavaScript("window.clear();")
@@ -59,13 +63,15 @@ const MobileSignaturePad = forwardRef(({ onBeginStroke, onEndStroke, onSignature
     }
   }))
 
+  // Messages sent from inside the webview go here
   function handleMessage(event: WebViewMessageEvent) {
-    // console.log('~~ Got webview message', event.nativeEvent.data)
     const data = JSON.parse(event.nativeEvent.data) as {
       event?: string
       isEmpty?: boolean
       signatureDataUrl?: string
     }
+
+    // Turn messages into calls of prop event handlers
     if (data.event && data.event === 'beginStroke') {
       onBeginStroke()
     }
@@ -81,14 +87,12 @@ const MobileSignaturePad = forwardRef(({ onBeginStroke, onEndStroke, onSignature
     loadSignaturePadHtml()
   }, [])
 
-  // TODO - move style up...
-
   return (
     <WebView
       originWhitelist={['*']}
       source={{ html: sourceHtml }}
       style={style}
-      scalesPageToFit={false}
+      scalesPageToFit={true}
       onMessage={handleMessage}
       ref={webview}
     />

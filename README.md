@@ -13,7 +13,7 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
 2. Start the app
 
    ```bash
-    npx expo start
+   npx expo start
    ```
 
 In the output, you'll find options to open the app in a
@@ -55,7 +55,7 @@ Join our community of developers creating universal apps.
 
 
 
-I am working on porting a capacitor based app to React Native. One of the components I need to re-create is a signature area. Unfortunately the existing components for this are pretty terrible so I decided to create my own. It turned out to be so quick and easy that I saved myself hours of time.
+I am currently working on porting a capacitor based app to React Native. One of the components I need to re-create is a signature area. Unfortunately the existing components for this are pretty terrible so I decided to create my own. It turned out to be so quick and easy that I saved myself hours of time.
 
 Here is how I created the custom signature pad component:
 
@@ -123,3 +123,34 @@ Should I package this up into an npm package or is it more useful as example cod
 
 
 TODO - test on iOS
+TODO - test with native build (No expo go)
+
+
+TLDR:
+
+npm add signature_pad
+Add expo-filesystem : https://docs.expo.dev/versions/latest/sdk/filesystem/
+Add expo-asset : https://docs.expo.dev/versions/latest/sdk/asset/
+
+Copy assets/signature_pad.html
+Copy components/MobileSignaturePad.tsx
+Copy components/WebSignaturePad.tsx
+
+See app/index.tsx for example usage.
+
+TLDR to customize:
+
+npm add signature_pad
+Add expo-filesystem : https://docs.expo.dev/versions/latest/sdk/filesystem/
+Add expo-asset : https://docs.expo.dev/versions/latest/sdk/asset/
+
+Copy assets/signature_pad.html
+Copy components/MobileSignaturePad.tsx
+Copy components/WebSignaturePad.tsx
+Copy webview folder
+
+cd webview/react-signature-pad
+npm install
+npm run build (re-creates assets/signature_pad.html)
+
+See app/index.tsx for example usage.

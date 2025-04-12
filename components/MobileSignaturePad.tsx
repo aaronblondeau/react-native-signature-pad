@@ -6,13 +6,16 @@ import { readAsStringAsync } from 'expo-file-system';
 
 export type MobileSignaturePadRef = {
   clear: () => void,
+  resize: () => void,
   requestImageData: () => void
+  requestIsEmpty: () => void
 }
 
-const MobileSignaturePad = forwardRef(({ onBeginStroke, onEndStroke, onSignatureData, style } : {
+const MobileSignaturePad = forwardRef(({ onBeginStroke, onEndStroke, onSignatureData, onIsEmpty, style } : {
     onBeginStroke: () => void,
     onEndStroke: () => void,
     onSignatureData: (data: string) => void,
+    onIsEmpty: (isEmpty: boolean) => void,
     style?: ViewStyle
   }, ref) => {
 
@@ -58,8 +61,14 @@ const MobileSignaturePad = forwardRef(({ onBeginStroke, onEndStroke, onSignature
     clear: () => {
       webview.current?.injectJavaScript("window.clear();")
     },
+    resize: () => {
+      webview.current?.injectJavaScript("window.resize();")
+    },
     requestImageData: () => {
       webview.current?.injectJavaScript("window.emitSignatureData();")
+    },
+    requestIsEmpty: () => {
+      webview.current?.injectJavaScript("window.emitIsEmpty();")
     }
   }))
 
@@ -77,6 +86,9 @@ const MobileSignaturePad = forwardRef(({ onBeginStroke, onEndStroke, onSignature
     }
     if (data.event && data.event === 'endStroke') {
       onEndStroke()
+    }
+    if (data.event && data.event === 'isEmpty') {
+      onIsEmpty(data.isEmpty || false)
     }
     if (data.signatureDataUrl) {
       onSignatureData(data.signatureDataUrl)

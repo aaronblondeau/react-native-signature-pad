@@ -21,16 +21,16 @@ const WebSignaturePad = forwardRef(({ onBeginStroke, onEndStroke, style } : {
       signaturePad.current?.clear();
     },
     resize: () => {
-      resizeCanvas()
+      resizeCanvas();
     },
     toDataURL: () => {
-      return signaturePad.current?.toDataURL() || ''
+      return signaturePad.current?.toDataURL() || '';
     },
     isEmpty: () => {
       if (!signaturePad.current) {
-        return true
+        return true;
       }
-      return signaturePad.current?.isEmpty()
+      return signaturePad.current?.isEmpty();
     }
   }))
 
@@ -52,7 +52,7 @@ const WebSignaturePad = forwardRef(({ onBeginStroke, onEndStroke, style } : {
     return () => {
       window.removeEventListener('resize', resizeCanvas)
     }
-  });
+  }, []);
 
   function resizeCanvas() {
     if (canvasRef.current) {

@@ -1,38 +1,30 @@
-import {Button, Image, Platform, Dimensions, View } from "react-native";
-import MobileSignaturePad, { MobileSignaturePadRef } from "@/components/MobileSignaturePad";
-import WebSignaturePad, { WebSignaturePadRef } from "@/components/WebSignaturePad";
+import {Button, Image, View, Text } from "react-native";
 import { useRef, useState } from "react";
+import SignaturePad, { SignaturePadRef } from "@/components/SignaturePad";
 
 export default function Index() {
   const [imageData, setImageData] = useState('')
-  const webSignaturePad = useRef<WebSignaturePadRef>(null)
-  const mobileSignaturePad = useRef<MobileSignaturePadRef>(null)
+  const [isDrawing, setIsDrawing] = useState(false)
+  const signaturePad = useRef<SignaturePadRef>(null)
 
   // Not doing anything with these yet...
   function handleBeginStroke () {
-    console.log('~~ handleBeginStroke')
+    setIsDrawing(true)
   }
 
   function handleEndStroke() {
-    console.log('~~ handleEndStroke')
+    setIsDrawing(false)
   }
 
-  function handleDone() {
-    if (webSignaturePad.current) {
-      setImageData(webSignaturePad.current.toDataURL())
-    }
-    if (mobileSignaturePad.current) {
-      mobileSignaturePad.current.requestImageData()
+  async function handleDone() {
+    if (signaturePad.current) {
+      const imageData = await signaturePad.current.toDataURL()
+      setImageData(imageData)
     }
   }
 
   function handleReset() {
-    if (webSignaturePad.current) {
-      webSignaturePad.current.clear()
-    }
-    if (mobileSignaturePad.current) {
-      mobileSignaturePad.current.clear()
-    }
+    signaturePad.current?.clear()
     setImageData('')
   }
 
@@ -45,32 +37,35 @@ export default function Index() {
       style={{
         flex: 1,
         justifyContent: "flex-start",
-        alignItems: "center",
+        alignItems: "center"
       }}
     >
-      { Platform.OS === 'web' && 
-      <WebSignaturePad 
-        ref={webSignaturePad} 
-        onBeginStroke={handleBeginStroke} 
-        onEndStroke={handleEndStroke}
-        style={{ height: 250, width: 250 }}
-      />}
-      { Platform.OS !== 'web' && 
-      <MobileSignaturePad
-        ref={mobileSignaturePad}
-        onBeginStroke={handleBeginStroke}
-        onEndStroke={handleEndStroke}
-        onSignatureData={handleSignatureData}
-        style={{ height: 250, width: 250, flex: 0 }}
-      />}
-      <Button title="Done" onPress={handleDone} />
-      <Button title="Reset" onPress={handleReset} />
-      {imageData && (
-        <Image
-          resizeMode="contain"
-          style={{ height: 250, width: 250, flex: 1 }}
-          source={{ uri: imageData }}
+      <View style={{ height: 250, width: 250 }}>
+        <SignaturePad
+          ref={signaturePad}
+          onBeginStroke={handleBeginStroke}
+          onEndStroke={handleEndStroke}
+          onSignatureData={handleSignatureData}
+          style={{ height: 250, width: 250 }}
         />
+      </View>
+      <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+        <Button title="Done" onPress={handleDone} disabled={isDrawing} />
+        <Button title="Reset" onPress={handleReset} disabled={isDrawing} />
+      </View>
+      {imageData && (
+        <View style={{
+          flex: 1,
+          justifyContent: 'flex-start',
+          alignItems: 'center'
+        }}>
+          <Text>Signature Data:</Text>
+          <Image
+            resizeMode="contain"
+            style={{ height: 250, width: 250 }}
+            source={{ uri: imageData }}
+          />
+        </View>
       )}
     </View>
   );

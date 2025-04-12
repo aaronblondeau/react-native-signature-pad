@@ -1,7 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
 import WebSignaturePad, { type WebSignaturePadRef } from '../../../components/WebSignaturePad'
 
-const win = window as unknown as { ReactNativeWebView?: {postMessage: (msg: string) => void}, emitSignatureData?: () => void, clear?: () => void, resize?: () => void }
+const win = window as unknown as { 
+  ReactNativeWebView?: {postMessage: (msg: string) => void},
+  emitSignatureData?: () => void,
+  clear?: () => void,
+  resize?: () => void,
+  emitIsEmpty?: () => void,
+}
 
 function App() {
   const [imageData, setImageData] = useState('');
@@ -27,8 +33,18 @@ function App() {
     win.clear = () => {
       signaturePad.current?.clear()
     }
-    win.resize = () => {
-      signaturePad.current?.resize()
+    win.emitIsEmpty = () => {
+      if (win.ReactNativeWebView) {
+        win.ReactNativeWebView.postMessage(JSON.stringify({
+          event: 'isEmpty',
+          isEmpty: signaturePad.current?.isEmpty()
+        }))
+      } else {
+        console.log('~~ Would emit if react native webview', {
+          event: 'isEmpty',
+          isEmpty: signaturePad.current?.isEmpty()
+        })
+      }
     }
   })
 
